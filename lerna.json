@@ -1,0 +1,32 @@
+{
+  "$schema": "node_modules/lerna/schemas/lerna-schema.json",
+  "version": "0.1.0",
+  "npmClient": "npm",
+  "packages": [
+    "packages/*",
+    "packages/adapters/*",
+    "packages/extensions/*",
+    "packages/infrastructure/*"
+  ],
+  "command": {
+    "publish": {
+      "message": "chore(release): publish %s",
+      "ignoreChanges": [
+        "*.md",
+        "*.test.ts",
+        "examples/**",
+        "docs/**"
+      ]
+    },
+    "version": {
+      "allowBranch": "main",
+      "conventionalCommits": true,
+      "message": "chore(release): version %s"
+    },
+    "bootstrap": {
+      "hoist": true,
+      "npmClientArgs": ["--no-package-lock"]
+    }
+  }
+}
+
