@@ -293,6 +293,8 @@ These documents guide development:
 | **MIGRATION_STRATEGY_SPECIFICATION.md** | ✅ Complete | P0 | Done |
 | **ARCHITECTURE_SPECIFICATION.md** | ✅ Complete | P0 | Done |
 | **EDGE_AND_MODERN_ORM_SUPPORT.md** | ✅ Complete | P0 | Done |
+| **TDD_ISP_IMPLEMENTATION_PLAN.md** | ✅ Complete | P0 | Done |
+| **IMPLEMENTATION_ROADMAP.md** | ✅ Complete | P0 | Done |
 | **API_SPECIFICATION.md** | 📝 Todo | P0 | Week 2 |
 | **ADAPTER_SPECIFICATION.md** | 📝 Todo | P0 | Week 2 |
 | **GDPR_SPECIFICATION.md** | 📝 Todo | P0 | Week 3 |

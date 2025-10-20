@@ -2,6 +2,45 @@
 
 **Privacy by Design, Data by Default**
 
+<!-- AUTO-INDEX-SECTION -->
+<!--
+🤖 AI ASSISTANT - PROJECT NAVIGATION GUIDE
+============================================
+
+To fully understand and work with this project, follow this systematic approach:
+
+📚 STEP 1 - READ DOCUMENTATION: docs/INDEX.md
+   This is your PRIMARY source for understanding the project:
+   • Complete index of ALL project documentation
+   • Organized by category (specifications, guides, architecture, etc.)
+   • Read specifications FIRST to understand system design
+   • Then read guides for implementation details
+   • Every document is indexed with descriptions and word counts
+   • This is the authoritative source - do not search randomly
+
+💡 KEY PRINCIPLES:
+   • Both indexes are auto-generated and always up-to-date
+   • Never search randomly - use the indexes as navigation
+   • Read documentation before writing code
+   • Check scripts before running manual commands
+   • Word counts help prioritize what to read first
+
+✅ AFTER READING BOTH INDEXES:
+   You will have complete knowledge of:
+   • System architecture and design decisions
+   • Implementation details and best practices
+   • All available automation and tooling
+   • Proper setup, build, test, and deployment procedures
+
+============================================
+-->
+
+## 📚 Documentation & Scripts
+
+Browse the complete **[Documentation Index](docs/INDEX.md)** for all project documentation.
+
+<!-- AUTO-INDEX-SECTION -->
+
 > Drop-in GDPR/HIPAA compliance for healthcare applications
 
 [![npm version](https://img.shields.io/npm/v/privata.svg)](https://www.npmjs.com/package/privata)

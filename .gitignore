@@ -5,21 +5,32 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
+.npm/
+.yarn/
 
 # Build output
 dist/
 build/
 *.tsbuildinfo
+*.js.map
+*.d.ts.map
+packages/*/dist/
+packages/*/build/
 
 # Coverage
 coverage/
 .nyc_output/
 *.lcov
+*.coverage
+junit.xml
 
 # Environment variables
 .env
 .env.local
 .env.*.local
+.env.development
+.env.test
+.env.production
 
 # IDE
 .vscode/
@@ -28,18 +39,34 @@ coverage/
 *.swo
 *~
 .DS_Store
+*.sublime-project
+*.sublime-workspace
+.project
+.classpath
+.settings/
+.vscode-test/
 
 # Testing
 .jest-cache/
+test-results/
+*.spec.js
+*.test.js
 
 # Logs
 logs/
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
 
 # Temporary files
 tmp/
 temp/
 *.tmp
+*.temp
+.cache/
 
 # Package manager
 package-lock.json
@@ -48,18 +75,125 @@ pnpm-lock.yaml
 
 # Documentation build
 docs/api/
+docs/.vitepress/cache
+docs/.vitepress/dist
 
 # MacOS
 .DS_Store
 .AppleDouble
 .LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
 
 # Linux
 *~
 .directory
+.fuse_hidden*
+.Trash-*
+.nfs*
 
 # Windows
 Thumbs.db
+Thumbs.db:encryptable
 ehthumbs.db
+ehthumbs_vista.db
 Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
 
+# NX
+.nx/cache
+.nx/workspace-data
+
+# CLI Demo specific
+packages/cli-demo/databases/*.db
+packages/cli-demo/databases/*.db-shm
+packages/cli-demo/databases/*.db-wal
+packages/cli-demo/databases/patient-export-*.json
+
+# devibe/unvibe directories
+# These directories contain backups and temporary files from devibe
+.devibe/
+.unvibe/
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Debug files
+debug.log
+trace.log
