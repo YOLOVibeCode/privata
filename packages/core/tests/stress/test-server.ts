@@ -11,6 +11,7 @@ import { PseudonymService } from '../../src/services/PseudonymService';
 // Mock adapters for testing
 class InMemoryDB {
   private data: Map<string, any> = new Map();
+  private index: Map<string, string> = new Map(); // Fast lookup index
 
   async findById(id: string): Promise<any | null> {
     return this.data.get(id) || null;
@@ -36,6 +37,7 @@ class InMemoryDB {
     const id = data.id || `doc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const doc = { ...data, id };
     this.data.set(id, doc);
+    this.index.set(id, id); // Add to index
     return doc;
   }
 
@@ -51,10 +53,12 @@ class InMemoryDB {
 
   async delete(id: string): Promise<void> {
     this.data.delete(id);
+    this.index.delete(id);
   }
 
   clear() {
     this.data.clear();
+    this.index.clear();
   }
 
   size() {
@@ -63,9 +67,18 @@ class InMemoryDB {
 }
 
 class InMemoryCache {
+  private static instance: InMemoryCache; // Singleton instance
   private cache: Map<string, { value: string; expiry: number }> = new Map();
   public hits: number = 0;
   public misses: number = 0;
+
+  // Singleton pattern to ensure shared cache across all requests
+  static getInstance(): InMemoryCache {
+    if (!InMemoryCache.instance) {
+      InMemoryCache.instance = new InMemoryCache();
+    }
+    return InMemoryCache.instance;
+  }
 
   async get<T>(key: string): Promise<T | null> {
     const entry = this.cache.get(key);
@@ -148,10 +161,10 @@ export function createTestServer(port: number = 3000) {
   const app = express();
   app.use(express.json());
 
-  // Create Privata instance with in-memory adapters
+  // Create Privata instance with in-memory adapters (using singleton cache)
   const identityDB = new InMemoryDB();
   const clinicalDB = new InMemoryDB();
-  const cache = new InMemoryCache();
+  const cache = InMemoryCache.getInstance(); // Use singleton for shared cache
 
   const mockPseudonymGen = {
     generate: () => `pseu_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
