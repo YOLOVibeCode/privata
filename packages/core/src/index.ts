@@ -88,3 +88,9 @@ export * from './types/EventTypes';
 
 // Main Privata class
 export * from './Privata';
+
+// Models (NEW - CRUD with data separation)
+export { ModelRegistry, Model } from './models/ModelRegistry';
+export type { SchemaDefinition, FieldDefinition, ValidationResult } from './models/ModelRegistry';
+export { PrivataModel } from './models/PrivataModel';
+export type { DeleteOptions } from './models/PrivataModel';
