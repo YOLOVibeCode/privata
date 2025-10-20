@@ -20,7 +20,10 @@
     "lint:fix": "eslint src/**/*.ts --fix",
     "format": "prettier --write src/**/*.ts",
     "format:check": "prettier --check src/**/*.ts",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "stress:server": "npx ts-node tests/stress/test-server.ts",
+    "stress:level1": "k6 run tests/stress/level1-baseline.js",
+    "stress:test": "npm run stress:server & sleep 3 && npm run stress:level1 && kill %1"
   },
   "dependencies": {
     "@elastic/elasticsearch": "^9.1.1",
