@@ -43,6 +43,12 @@ export class Privata {
   private rectifications: Map<string, any> = new Map();
   private modelRegistry: ModelRegistry = new ModelRegistry();
   private modelInstances: Map<string, PrivataModel> = new Map();
+  
+  // Public dependencies for model creation (can be injected for testing)
+  public identityDB: any;
+  public clinicalDB: any;
+  public cache: any;
+  public dataSeparator: any;
 
   constructor(config: PrivataConfig) {
     this.config = config;
@@ -60,10 +66,10 @@ export class Privata {
     if (!this.modelInstances.has(modelName)) {
       const modelInstance = new PrivataModel(
         modelSchema,
-        (this as any).identityDB,
-        (this as any).clinicalDB,
-        (this as any).cache,
-        (this as any).dataSeparator
+        this.identityDB,
+        this.clinicalDB,
+        this.cache,
+        this.dataSeparator
       );
       this.modelInstances.set(modelName, modelInstance);
     }

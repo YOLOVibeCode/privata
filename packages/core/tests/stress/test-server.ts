@@ -180,11 +180,11 @@ export function createTestServer(port: number = 3000) {
 
   const privata = new Privata(config);
 
-  // Inject dependencies
-  (privata as any).identityDB = identityDB;
-  (privata as any).clinicalDB = clinicalDB;
-  (privata as any).cache = cache;
-  (privata as any).dataSeparator = new DataSeparatorService(
+  // Inject dependencies (now using public properties)
+  privata.identityDB = identityDB;
+  privata.clinicalDB = clinicalDB;
+  privata.cache = cache;
+  privata.dataSeparator = new DataSeparatorService(
     new PseudonymService(mockPseudonymGen)
   );
 

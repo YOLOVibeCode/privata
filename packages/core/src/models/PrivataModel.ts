@@ -49,7 +49,7 @@ export class PrivataModel {
 
     // Generate ID for identity database
     const id = `${this.schema.modelName.toLowerCase()}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-
+    
     // Store in identity database
     const identityData = await this.identityDB.create({
       id,
@@ -67,10 +67,11 @@ export class PrivataModel {
       });
     }
 
-    // Merge and return
+    // Merge and return (preserve identity ID)
     const result = {
       ...identityData,
       ...clinicalData,
+      id: identityData.id, // Ensure identity ID is preserved
     };
 
     // Cache the result (TTL: 300 seconds = 5 minutes)
