@@ -18,6 +18,8 @@ import { ObjectionRequest, ObjectionResult, ObjectionOptions, ObjectionHistory, 
 import { AutomatedDecisionRequest, AutomatedDecisionResult, AutomatedDecisionOptions, AutomatedDecisionHistory, AutomatedDecisionAppealRequest, AutomatedDecisionAppealResult, AutomatedDecisionStatus } from './types/AutomatedDecisionRequest';
 import { PHIRequest, PHIResult, PHIOptions, PHIHistory, BreachEvent, BreachResult, HIPAAViolation, HIPAAViolationResult, ComplianceCheckResult } from './types/PHIRequest';
 import { AuditEvent } from './types/AuditEvent';
+import { ModelRegistry, Model, SchemaDefinition } from './models/ModelRegistry';
+import { PrivataModel } from './models/PrivataModel';
 
 export interface PrivataConfig {
   compliance: {
@@ -39,9 +41,52 @@ export class Privata {
   private initialized: boolean = false;
   private auditLog: AuditEvent[] = [];
   private rectifications: Map<string, any> = new Map();
+  private modelRegistry: ModelRegistry = new ModelRegistry();
+  private modelInstances: Map<string, PrivataModel> = new Map();
 
   constructor(config: PrivataConfig) {
     this.config = config;
+  }
+
+  /**
+   * Register a model with schema definition
+   * Returns a PrivataModel instance for CRUD operations
+   */
+  model(modelName: string, schema: SchemaDefinition): PrivataModel {
+    // Register schema with registry
+    const modelSchema = this.modelRegistry.register(modelName, schema);
+
+    // Create PrivataModel instance if not exists
+    if (!this.modelInstances.has(modelName)) {
+      const modelInstance = new PrivataModel(
+        modelSchema,
+        (this as any).identityDB,
+        (this as any).clinicalDB,
+        (this as any).cache,
+        (this as any).dataSeparator
+      );
+      this.modelInstances.set(modelName, modelInstance);
+    }
+
+    return this.modelInstances.get(modelName)!;
+  }
+
+  /**
+   * Check if a model is registered
+   */
+  hasModel(modelName: string): boolean {
+    return this.modelRegistry.has(modelName);
+  }
+
+  /**
+   * Get a registered model instance
+   */
+  getModel(modelName: string): PrivataModel {
+    const instance = this.modelInstances.get(modelName);
+    if (!instance) {
+      throw new Error(`Model "${modelName}" not found`);
+    }
+    return instance;
   }
 
   async initialize(): Promise<void> {
