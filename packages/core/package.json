@@ -23,13 +23,16 @@
     "type-check": "tsc --noEmit",
     "stress:server": "npx ts-node tests/stress/test-server.ts",
     "stress:level1": "k6 run tests/stress/level1-baseline.js",
+    "stress:level1:quick": "k6 run tests/stress/level1-quick.js",
     "stress:test": "npm run stress:server & sleep 3 && npm run stress:level1 && kill %1"
   },
   "dependencies": {
     "@elastic/elasticsearch": "^9.1.1",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/mongodb": "^4.0.6",
     "@types/pg": "^8.15.5",
     "@types/redis": "^4.0.10",
+    "better-sqlite3": "^12.4.1",
     "crypto": "^1.0.1",
     "mongodb": "^6.20.0",
     "pg": "^8.16.3",

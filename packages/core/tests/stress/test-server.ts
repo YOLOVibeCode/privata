@@ -4,65 +4,102 @@
  */
 
 import express, { Request, Response } from 'express';
+import Database from 'better-sqlite3';
 import { Privata, PrivataConfig } from '../../src/Privata';
 import { DataSeparatorService } from '../../src/services/DataSeparatorService';
 import { PseudonymService } from '../../src/services/PseudonymService';
 
-// Mock adapters for testing
-class InMemoryDB {
-  private data: Map<string, any> = new Map();
-  private index: Map<string, string> = new Map(); // Fast lookup index
+// SQLite database adapter for realistic performance testing
+class SQLiteDB {
+  private db: Database.Database;
+  private tableName: string;
+
+  constructor(tableName: string) {
+    // Use in-memory database for speed
+    this.db = new Database(':memory:');
+    this.tableName = tableName;
+    this.initTable();
+  }
+
+  private initTable() {
+    this.db.exec(`
+      CREATE TABLE IF NOT EXISTS ${this.tableName} (
+        id TEXT PRIMARY KEY,
+        data TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS idx_${this.tableName}_id ON ${this.tableName}(id);
+    `);
+  }
 
   async findById(id: string): Promise<any | null> {
-    return this.data.get(id) || null;
+    const stmt = this.db.prepare(`SELECT data FROM ${this.tableName} WHERE id = ?`);
+    const row = stmt.get(id) as any;
+    return row ? JSON.parse(row.data) : null;
   }
 
   async findMany(query: any = {}): Promise<any[]> {
-    const all = Array.from(this.data.values());
+    const stmt = this.db.prepare(`SELECT data FROM ${this.tableName}`);
+    const rows = stmt.all() as any[];
+    const results = rows.map(row => JSON.parse(row.data));
     
     if (Object.keys(query).length === 0) {
-      return all;
+      return results;
     }
 
-    return all.filter(item => {
+    return results.filter(item => {
       return Object.entries(query).every(([key, value]) => item[key] === value);
     });
   }
 
   async exists(id: string): Promise<boolean> {
-    return this.data.has(id);
+    const stmt = this.db.prepare(`SELECT 1 FROM ${this.tableName} WHERE id = ? LIMIT 1`);
+    return stmt.get(id) !== undefined;
   }
 
   async create(data: any): Promise<any> {
     const id = data.id || `doc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const doc = { ...data, id };
-    this.data.set(id, doc);
-    this.index.set(id, id); // Add to index
+    
+    const stmt = this.db.prepare(`
+      INSERT INTO ${this.tableName} (id, data)
+      VALUES (?, ?)
+    `);
+    
+    stmt.run(id, JSON.stringify(doc));
     return doc;
   }
 
   async update(id: string, data: any): Promise<any> {
-    const existing = this.data.get(id);
+    const existing = await this.findById(id);
     if (!existing) {
       throw new Error('Not found');
     }
-    const updated = { ...existing, ...data };
-    this.data.set(id, updated);
+    
+    const updated = { ...existing, ...data, id };
+    
+    const stmt = this.db.prepare(`
+      UPDATE ${this.tableName}
+      SET data = ?
+      WHERE id = ?
+    `);
+    
+    stmt.run(JSON.stringify(updated), id);
     return updated;
   }
 
   async delete(id: string): Promise<void> {
-    this.data.delete(id);
-    this.index.delete(id);
+    const stmt = this.db.prepare(`DELETE FROM ${this.tableName} WHERE id = ?`);
+    stmt.run(id);
   }
 
   clear() {
-    this.data.clear();
-    this.index.clear();
+    this.db.exec(`DELETE FROM ${this.tableName}`);
   }
 
   size() {
-    return this.data.size;
+    const stmt = this.db.prepare(`SELECT COUNT(*) as count FROM ${this.tableName}`);
+    const row = stmt.get() as any;
+    return row.count;
   }
 }
 
@@ -162,8 +199,8 @@ export function createTestServer(port: number = 3000) {
   app.use(express.json());
 
   // Create Privata instance with in-memory adapters (using singleton cache)
-  const identityDB = new InMemoryDB();
-  const clinicalDB = new InMemoryDB();
+  const identityDB = new SQLiteDB('identity');
+  const clinicalDB = new SQLiteDB('clinical');
   const cache = InMemoryCache.getInstance(); // Use singleton for shared cache
 
   const mockPseudonymGen = {
