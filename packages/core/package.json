@@ -22,9 +22,13 @@
     "format:check": "prettier --check src/**/*.ts",
     "type-check": "tsc --noEmit",
     "stress:server": "npx ts-node tests/stress/test-server.ts",
+    "stress:server:memory": "DB_TYPE=memory npx ts-node tests/stress/test-server.ts",
+    "stress:server:sqlite": "DB_TYPE=sqlite npx ts-node tests/stress/test-server.ts",
     "stress:level1": "k6 run tests/stress/level1-baseline.js",
     "stress:level1:quick": "k6 run tests/stress/level1-quick.js",
-    "stress:test": "npm run stress:server & sleep 3 && npm run stress:level1 && kill %1"
+    "stress:test": "npm run stress:server & sleep 3 && npm run stress:level1 && kill %1",
+    "stress:test:memory": "npm run stress:server:memory & sleep 3 && npm run stress:level1:quick && kill %1",
+    "stress:test:sqlite": "npm run stress:server:sqlite & sleep 3 && npm run stress:level1:quick && kill %1"
   },
   "dependencies": {
     "@elastic/elasticsearch": "^9.1.1",

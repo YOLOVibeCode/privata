@@ -1,6 +1,13 @@
 /**
- * Simple Express server for stress testing
- * Provides REST API for CRUD operations
+ * Hybrid Stress Test Server
+ * 
+ * Supports two database modes via DB_TYPE environment variable:
+ * - memory: Ultra-fast in-memory storage (default) - for stress testing
+ * - sqlite: Real SQLite database - for integration/compliance testing
+ * 
+ * Usage:
+ *   DB_TYPE=memory npm run stress:server   # Fast stress tests (<10ms)
+ *   DB_TYPE=sqlite npm run stress:server   # Realistic integration tests
  */
 
 import express, { Request, Response } from 'express';
@@ -9,7 +16,142 @@ import { Privata, PrivataConfig } from '../../src/Privata';
 import { DataSeparatorService } from '../../src/services/DataSeparatorService';
 import { PseudonymService } from '../../src/services/PseudonymService';
 
-// SQLite database adapter for realistic performance testing
+// ============================================================================
+// DATABASE TYPE SELECTION
+// ============================================================================
+
+type DBType = 'memory' | 'sqlite';
+const DB_TYPE: DBType = (process.env.DB_TYPE as DBType) || 'memory';
+
+console.log(`\n🚀 Starting Privata Stress Test Server`);
+console.log(`📊 Database Mode: ${DB_TYPE.toUpperCase()}`);
+console.log(`⚡ ${DB_TYPE === 'memory' ? 'FAST mode - optimized for speed' : 'REALISTIC mode - actual disk I/O'}\n`);
+
+// ============================================================================
+// IN-MEMORY DATABASE ADAPTER (OPTIMIZED FOR SPEED)
+// ============================================================================
+
+class InMemoryDB {
+  private data: Map<string, any> = new Map();
+  private indexes: Map<string, Set<string>> = new Map(); // Multi-field indexes
+
+  async findById(id: string): Promise<any | null> {
+    return this.data.get(id) || null;
+  }
+
+  async findMany(query: any = {}): Promise<any[]> {
+    if (Object.keys(query).length === 0) {
+      return Array.from(this.data.values());
+    }
+
+    // Use indexes for fast lookups
+    const queryEntries = Object.entries(query);
+    if (queryEntries.length > 0) {
+      const firstEntry = queryEntries[0];
+      if (firstEntry) {
+        const [firstKey, firstValue] = firstEntry;
+        const indexKey = `${firstKey}:${firstValue}`;
+        
+        if (this.indexes.has(indexKey)) {
+          const ids = this.indexes.get(indexKey)!;
+          return Array.from(ids)
+            .map(id => this.data.get(id))
+            .filter(item => item && this.matchesQuery(item, query));
+        }
+      }
+    }
+
+    // Fallback to full scan (still fast with Map)
+    return Array.from(this.data.values()).filter(item => 
+      this.matchesQuery(item, query)
+    );
+  }
+
+  async exists(id: string): Promise<boolean> {
+    return this.data.has(id);
+  }
+
+  async create(data: any): Promise<any> {
+    const id = data.id || `doc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const doc = { ...data, id };
+    
+    // Store document
+    this.data.set(id, doc);
+    
+    // Update indexes
+    this.updateIndexes(doc);
+    
+    return doc;
+  }
+
+  async update(id: string, data: any): Promise<any> {
+    const existing = this.data.get(id);
+    if (!existing) {
+      throw new Error('Not found');
+    }
+    
+    // Remove old indexes
+    this.removeIndexes(existing);
+    
+    const updated = { ...existing, ...data, id };
+    this.data.set(id, updated);
+    
+    // Add new indexes
+    this.updateIndexes(updated);
+    
+    return updated;
+  }
+
+  async delete(id: string): Promise<void> {
+    const doc = this.data.get(id);
+    if (doc) {
+      this.removeIndexes(doc);
+      this.data.delete(id);
+    }
+  }
+
+  clear() {
+    this.data.clear();
+    this.indexes.clear();
+  }
+
+  size() {
+    return this.data.size;
+  }
+
+  private matchesQuery(record: any, query: Record<string, any>): boolean {
+    return Object.entries(query).every(([key, value]) => record[key] === value);
+  }
+
+  private updateIndexes(doc: any) {
+    // Index common query fields
+    const indexFields = ['pseudonym', 'status', 'age'];
+    for (const field of indexFields) {
+      if (doc[field] !== undefined) {
+        const indexKey = `${field}:${doc[field]}`;
+        if (!this.indexes.has(indexKey)) {
+          this.indexes.set(indexKey, new Set());
+        }
+        this.indexes.get(indexKey)!.add(doc.id);
+      }
+    }
+  }
+
+  private removeIndexes(doc: any) {
+    const indexFields = ['pseudonym', 'status', 'age'];
+    for (const field of indexFields) {
+      if (doc[field] !== undefined) {
+        const indexKey = `${field}:${doc[field]}`;
+        this.indexes.get(indexKey)?.delete(doc.id);
+      }
+    }
+  }
+}
+
+// ============================================================================
+// SQLITE DATABASE ADAPTER (REALISTIC PERFORMANCE)
+// ============================================================================
+
 class SQLiteDB {
   private db: Database.Database;
   private tableName: string;
@@ -198,10 +340,13 @@ export function createTestServer(port: number = 3000) {
   const app = express();
   app.use(express.json());
 
-  // Create Privata instance with in-memory adapters (using singleton cache)
-  const identityDB = new SQLiteDB('identity');
-  const clinicalDB = new SQLiteDB('clinical');
+  // Create database adapters based on DB_TYPE
+  const identityDB = DB_TYPE === 'sqlite' ? new SQLiteDB('identity') : new InMemoryDB();
+  const clinicalDB = DB_TYPE === 'sqlite' ? new SQLiteDB('clinical') : new InMemoryDB();
   const cache = InMemoryCache.getInstance(); // Use singleton for shared cache
+
+  console.log(`✅ Using ${DB_TYPE.toUpperCase()} database adapters`);
+  console.log(`✅ Cache: In-memory (singleton)`);
 
   const mockPseudonymGen = {
     generate: () => `pseu_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -329,6 +474,7 @@ export function createTestServer(port: number = 3000) {
   app.get('/health', (req: Request, res: Response) => {
     res.json({
       status: 'healthy',
+      dbType: DB_TYPE,
       cache: cache.getStats(),
       database: {
         identity: identityDB.size(),
