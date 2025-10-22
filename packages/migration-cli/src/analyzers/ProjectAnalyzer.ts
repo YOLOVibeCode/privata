@@ -204,15 +204,15 @@ export class ProjectAnalyzer {
       const extension = filePath.split('.').pop()?.toLowerCase();
       
       let type = 'unknown';
-      if (['ts', 'tsx'].includes(extension)) {
+      if (extension && ['ts', 'tsx'].includes(extension)) {
         type = 'typescript';
-      } else if (['js', 'jsx'].includes(extension)) {
+      } else if (extension && ['js', 'jsx'].includes(extension)) {
         type = 'javascript';
-      } else if (['json'].includes(extension)) {
+      } else if (extension && ['json'].includes(extension)) {
         type = 'config';
-      } else if (['css', 'scss', 'sass'].includes(extension)) {
+      } else if (extension && ['css', 'scss', 'sass'].includes(extension)) {
         type = 'stylesheet';
-      } else if (['html'].includes(extension)) {
+      } else if (extension && ['html'].includes(extension)) {
         type = 'markup';
       }
 

@@ -177,7 +177,12 @@ export class MonitoringService {
   private async measureResponseTime(): Promise<number> {
     // Simulate response time measurement
     const start = Date.now();
-    await this.privata.requestDataAccess('test-user', {});
+    await this.privata.requestDataAccess('test-user', {
+      userId: 'test-user',
+      region: 'US',
+      permissions: ['read'],
+      consent: {}
+    });
     return Date.now() - start;
   }
 
@@ -366,8 +371,17 @@ export class MonitoringService {
     return [...this.alertRules];
   }
 
-  async addAlertRule(rule: AlertRule): Promise<void> {
-    this.alertRules.push(rule);
+  async addAlertRule(rule: Partial<AlertRule>): Promise<void> {
+    const fullRule: AlertRule = {
+      id: rule.id || `rule-${Date.now()}`,
+      name: rule.name || 'Unnamed Rule',
+      condition: rule.condition || 'true',
+      threshold: rule.threshold || 0,
+      severity: rule.severity || 'medium',
+      enabled: rule.enabled !== undefined ? rule.enabled : true,
+      notificationChannels: rule.notificationChannels || []
+    };
+    this.alertRules.push(fullRule);
   }
 
   async updateAlertRule(ruleId: string, updates: Partial<AlertRule>): Promise<void> {

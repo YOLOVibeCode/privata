@@ -22,9 +22,12 @@ export class MigrationEngine {
   private reportGenerator: ReportGenerator;
   private configManager: ConfigManager;
   private fileSystem: FileSystem;
-  private logger: Logger;
+  public logger: Logger;
 
-  constructor(private options: MigrationEngineOptions) {
+  public options: MigrationEngineOptions;
+
+  constructor(options: MigrationEngineOptions) {
+    this.options = options;
     this.logger = new Logger(options.verbose);
     this.fileSystem = new FileSystem(this.logger);
     this.configManager = new ConfigManager();
