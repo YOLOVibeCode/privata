@@ -1,8 +1,8 @@
 // Main OData service exports
-export { ODataService, ODataServiceConfig, ODataEntitySet, ODataQueryOptions, ODataResponse } from './ODataService';
+export { ODataService, ODataServiceConfig } from './ODataService';
 export { ODataServer, ODataServerConfig } from './ODataServer';
-export { ODataMetadata, EntityType, Property, NavigationProperty, FunctionImport, ActionImport, Parameter } from './ODataMetadata';
-export { ODataComplianceFilter, ParsedQuery } from './ODataComplianceFilter';
+export { ODataMetadata } from './ODataMetadata';
+export { ODataComplianceFilter } from './ODataComplianceFilter';
 export { ODataQueryParser } from './ODataQueryParser';
 export { ODataResponseBuilder } from './ODataResponseBuilder';
 
@@ -35,12 +35,6 @@ export type {
   ODataEntitySet,
   ODataQueryOptions,
   ODataResponse,
-  ParsedQuery,
-  EntityType,
-  Property,
-  NavigationProperty,
-  FunctionImport,
-  ActionImport,
-  Parameter
-} from './types';
+  ParsedQuery
+} from './ODataService';
 
