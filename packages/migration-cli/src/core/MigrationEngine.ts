@@ -23,7 +23,6 @@ export class MigrationEngine {
   private configManager: ConfigManager;
   private fileSystem: FileSystem;
   public logger: Logger;
-
   public options: MigrationEngineOptions;
 
   constructor(options: MigrationEngineOptions) {
@@ -129,7 +128,7 @@ export class MigrationEngine {
 
     } catch (error) {
       results.errors.push({
-        message: error.message,
+        message: error instanceof Error ? error.message : String(error),
         file: 'migration',
         line: 0,
         severity: 'error',
@@ -615,8 +614,8 @@ export class MigrationEngine {
   }
 
   // Getters for other classes
-  get options() { return this.options; }
-  get logger() { return this.logger; }
-  get fileSystem() { return this.fileSystem; }
+  getOptions() { return this.options; }
+  getLogger() { return this.logger; }
+  getFileSystem() { return this.fileSystem; }
 }
 

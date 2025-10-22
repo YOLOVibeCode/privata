@@ -387,7 +387,18 @@ export class MonitoringService {
   async updateAlertRule(ruleId: string, updates: Partial<AlertRule>): Promise<void> {
     const ruleIndex = this.alertRules.findIndex(r => r.id === ruleId);
     if (ruleIndex !== -1) {
-      this.alertRules[ruleIndex] = { ...this.alertRules[ruleIndex], ...updates };
+      const existingRule = this.alertRules[ruleIndex];
+      if (existingRule) {
+        this.alertRules[ruleIndex] = {
+          id: updates.id || existingRule.id,
+          name: updates.name || existingRule.name,
+          condition: updates.condition || existingRule.condition,
+          threshold: updates.threshold !== undefined ? updates.threshold : existingRule.threshold,
+          severity: updates.severity || existingRule.severity,
+          enabled: updates.enabled !== undefined ? updates.enabled : existingRule.enabled,
+          notificationChannels: updates.notificationChannels || existingRule.notificationChannels,
+        };
+      }
     }
   }
 

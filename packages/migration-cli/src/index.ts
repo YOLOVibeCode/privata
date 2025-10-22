@@ -13,6 +13,14 @@ export { FileSystem } from './utils/FileSystem';
 export * from './types';
 
 // Default export
+import { MigrationEngine } from './core/MigrationEngine';
+import { ProjectAnalyzer } from './analyzers/ProjectAnalyzer';
+import { CodeTransformer } from './transformers/CodeTransformer';
+import { ReportGenerator } from './reporters/ReportGenerator';
+import { ConfigManager } from './config/ConfigManager';
+import { Logger } from './utils/Logger';
+import { FileSystem } from './utils/FileSystem';
+
 export default {
   MigrationEngine,
   ProjectAnalyzer,

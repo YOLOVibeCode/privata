@@ -74,9 +74,9 @@ export class ConfigManager {
       // Validate boolean fields
       const booleanFields = ['dryRun', 'force', 'backup', 'verbose'];
       for (const field of booleanFields) {
-        if (typeof config[field] !== 'boolean') {
+        if (typeof config[field as keyof MigrationConfig] !== 'boolean') {
           this.logger.warn(`Invalid boolean field: ${field}, using default`);
-          config[field] = this.getDefaultConfig()[field];
+          (config as any)[field] = this.getDefaultConfig()[field as keyof MigrationConfig];
         }
       }
 

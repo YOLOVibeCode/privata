@@ -142,7 +142,7 @@ program
       console.log(chalk.blue('Current configuration:'));
       console.log(JSON.stringify(config, null, 2));
     } else if (options.validate) {
-      const isValid = await configManager.validateConfig();
+      const isValid = await configManager.validateConfig({});
       if (isValid) {
         console.log(chalk.green('Configuration is valid!'));
       } else {
@@ -163,7 +163,7 @@ program
 
     try {
       // Generate template based on type
-      const templateGenerator = new TemplateGenerator();
+      const templateGenerator = new (await import('./templates/TemplateGenerator')).TemplateGenerator();
       await templateGenerator.generate(options.type, options.output);
       
       spinner.succeed('Template generated successfully!');
