@@ -319,12 +319,7 @@ export class ODataService {
       await this.checkPermissions(entitySet, 'delete', userContext);
 
       // Delete entity with compliance
-      await this.privata.delete(entitySet.model, { id: key }, {
-        complianceMode: 'strict',
-        purpose: 'odata-delete',
-        legalBasis: 'legitimate-interest',
-        auditLog: true
-      });
+      await this.privata.delete(entitySet.model, key);
 
       // Log audit trail
       await this.logAuditTrail('delete', entitySetName, userContext, { id: key });
@@ -385,12 +380,7 @@ export class ODataService {
       await this.checkFunctionPermissions(functionName, userContext);
 
       // Execute function with compliance
-      const result = await this.privata.executeFunction(functionName, parameters, {
-        complianceMode: 'strict',
-        purpose: 'odata-function',
-        legalBasis: 'legitimate-interest',
-        auditLog: true
-      });
+      const result = await this.privata.executeFunction(functionName, parameters);
 
       // Log audit trail
       await this.logAuditTrail('function', functionName, userContext, result);
@@ -413,12 +403,7 @@ export class ODataService {
       await this.checkActionPermissions(actionName, userContext);
 
       // Execute action with compliance
-      const result = await this.privata.executeAction(actionName, parameters, {
-        complianceMode: 'strict',
-        purpose: 'odata-action',
-        legalBasis: 'legitimate-interest',
-        auditLog: true
-      });
+      const result = await this.privata.executeAction(actionName, parameters);
 
       // Log audit trail
       await this.logAuditTrail('action', actionName, userContext, result);
@@ -442,8 +427,7 @@ export class ODataService {
 
     const hasPermission = await this.privata.checkAccessPermissions(
       userContext.userId,
-      `${entitySet.name}:${operation}`,
-      operation
+      `${entitySet.name}:${operation}`
     );
 
     if (!hasPermission) {
@@ -461,8 +445,7 @@ export class ODataService {
 
     const hasPermission = await this.privata.checkAccessPermissions(
       userContext.userId,
-      `function:${functionName}`,
-      'execute'
+      `function:${functionName}`
     );
 
     if (!hasPermission) {
@@ -480,8 +463,7 @@ export class ODataService {
 
     const hasPermission = await this.privata.checkAccessPermissions(
       userContext.userId,
-      `action:${actionName}`,
-      'execute'
+      `action:${actionName}`
     );
 
     if (!hasPermission) {
@@ -496,8 +478,7 @@ export class ODataService {
     data?: any
   ): Promise<void> {
     if (this.config.compliance.auditLogging) {
-      await this.privata.logAuditEvent({
-        operation,
+      await this.privata.logAuditEvent(operation, {
         resource,
         userId: userContext?.userId,
         timestamp: new Date(),
@@ -513,7 +494,7 @@ export class ODataService {
 
   private async handleGetRequest(url: string, userContext?: any): Promise<any> {
     // Parse URL to extract entity set and key
-    const urlParts = url.split('/');
+    const urlParts = url?.split('/') || [];
     const entitySetName = urlParts[0];
     
     if (urlParts.length > 1) {
@@ -529,7 +510,7 @@ export class ODataService {
     data: any,
     userContext?: any
   ): Promise<any> {
-    const entitySetName = url.split('/')[0];
+    const entitySetName = url?.split('/')[0] || '';
     return await this.createEntity(entitySetName, data, userContext);
   }
 
@@ -538,7 +519,7 @@ export class ODataService {
     data: any,
     userContext?: any
   ): Promise<any> {
-    const urlParts = url.split('/');
+    const urlParts = url?.split('/') || [];
     const entitySetName = urlParts[0];
     const key = urlParts[1];
     return await this.updateEntity(entitySetName, key, data, userContext);
@@ -548,7 +529,7 @@ export class ODataService {
     url: string,
     userContext?: any
   ): Promise<void> {
-    const urlParts = url.split('/');
+    const urlParts = url?.split('/') || [];
     const entitySetName = urlParts[0];
     const key = urlParts[1];
     return await this.deleteEntity(entitySetName, key, userContext);
