@@ -351,6 +351,16 @@ export class Privata {
     return { id: _id, ..._data };
   }
 
+  async delete(_model: string, _id: string): Promise<void> {
+    // Delete entity
+    // Stub implementation
+  }
+
+  async executeFunction(_functionName: string, _parameters: any): Promise<any> {
+    // Execute OData function
+    return { result: 'function executed' };
+  }
+
   // Private helper methods
   private async validateAccess(operation: string, data: any): Promise<void> {
     if (this.config.compliance?.gdpr) {

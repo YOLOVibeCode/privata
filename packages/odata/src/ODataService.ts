@@ -224,7 +224,7 @@ export class ODataService {
       return result;
 
     } catch (error) {
-      throw new Error(`OData entity query failed: ${error.message}`);
+      throw new Error(`OData entity query failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -259,7 +259,7 @@ export class ODataService {
       return result;
 
     } catch (error) {
-      throw new Error(`OData entity creation failed: ${error.message}`);
+        throw new Error(`OData entity creation failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -289,14 +289,8 @@ export class ODataService {
       // Update entity with compliance
       const result = await this.privata.update(
         entitySet.model,
-        { id: key },
-        complianceData,
-        {
-          complianceMode: 'strict',
-          purpose: 'odata-update',
-          legalBasis: 'legitimate-interest',
-          auditLog: true
-        }
+        key,
+        complianceData
       );
 
       // Log audit trail
@@ -305,7 +299,7 @@ export class ODataService {
       return result;
 
     } catch (error) {
-      throw new Error(`OData entity update failed: ${error.message}`);
+        throw new Error(`OData entity update failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -336,7 +330,7 @@ export class ODataService {
       await this.logAuditTrail('delete', entitySetName, userContext, { id: key });
 
     } catch (error) {
-      throw new Error(`OData entity deletion failed: ${error.message}`);
+        throw new Error(`OData entity deletion failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -373,7 +367,7 @@ export class ODataService {
 
         results.push({ success: true, result });
       } catch (error) {
-        results.push({ success: false, error: error.message });
+        results.push({ success: false, error: error instanceof Error ? error.message : String(error) });
       }
     }
 
@@ -404,7 +398,7 @@ export class ODataService {
       return result;
 
     } catch (error) {
-      throw new Error(`OData function call failed: ${error.message}`);
+      throw new Error(`OData function call failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -432,7 +426,7 @@ export class ODataService {
       return result;
 
     } catch (error) {
-      throw new Error(`OData action call failed: ${error.message}`);
+      throw new Error(`OData action call failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 

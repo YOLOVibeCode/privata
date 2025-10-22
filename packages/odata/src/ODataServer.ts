@@ -156,7 +156,7 @@ export class ODataServer {
         const userContext = (req as any).user;
 
         const result = await this.odataService.updateEntity(
-          entitySet,
+          entitySet || '',
           key || '',
           data,
           userContext
@@ -175,7 +175,7 @@ export class ODataServer {
         const userContext = (req as any).user;
 
         await this.odataService.deleteEntity(
-          entitySet,
+          entitySet || '',
           key || '',
           userContext
         );
