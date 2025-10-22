@@ -117,7 +117,7 @@ export class ODataServer {
         const userContext = (req as any).user;
 
         const result = await this.odataService.getEntity(
-          entitySet,
+          entitySet || '',
           key || '',
           queryOptions,
           userContext

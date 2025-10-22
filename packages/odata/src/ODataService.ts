@@ -132,7 +132,7 @@ export class ODataService {
       // Apply filters
       if (complianceQuery.filters) {
         for (const filter of complianceQuery.filters) {
-          query.where(filter.field, filter.operator, filter.value, filter.dataType);
+          query.where(filter.field, filter.operator as any, filter.value, filter.dataType);
         }
       }
 
@@ -169,7 +169,7 @@ export class ODataService {
       return response;
 
     } catch (error) {
-      throw new Error(`OData query failed: ${error.message}`);
+        throw new Error(`OData query failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -251,12 +251,7 @@ export class ODataService {
       );
 
       // Create entity with compliance
-      const result = await this.privata.create(entitySet.model, complianceData, {
-        complianceMode: 'strict',
-        purpose: 'odata-create',
-        legalBasis: 'legitimate-interest',
-        auditLog: true
-      });
+      const result = await this.privata.create(entitySet.model, complianceData);
 
       // Log audit trail
       await this.logAuditTrail('create', entitySetName, userContext, result);

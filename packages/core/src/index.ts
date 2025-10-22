@@ -346,6 +346,11 @@ export class Privata {
     return { id: Date.now(), ..._data };
   }
 
+  async update(_model: string, _id: string, _data: any): Promise<any> {
+    // Update existing entity
+    return { id: _id, ..._data };
+  }
+
   // Private helper methods
   private async validateAccess(operation: string, data: any): Promise<void> {
     if (this.config.compliance?.gdpr) {
