@@ -1,6 +1,11 @@
 import js from '@eslint/js';
 import typescript from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export default [
   js.configs.recommended,
@@ -11,7 +16,11 @@ export default [
       parserOptions: {
         ecmaVersion: 2022,
         sourceType: 'module',
-        project: './tsconfig.json',
+        project: [
+          './tsconfig.json',
+          './packages/*/tsconfig.json'
+        ],
+        tsconfigRootDir: __dirname,
       },
       globals: {
         console: 'readonly',
