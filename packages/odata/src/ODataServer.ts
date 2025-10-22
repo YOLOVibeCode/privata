@@ -76,7 +76,7 @@ export class ODataServer {
         res.set('Content-Type', 'application/xml');
         res.send(metadata);
       } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error instanceof Error ? error.message : String(error) });
       }
     });
 
@@ -86,7 +86,7 @@ export class ODataServer {
         const serviceDocument = await this.generateServiceDocument();
         res.json(serviceDocument);
       } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error instanceof Error ? error.message : String(error) });
       }
     });
 
@@ -95,7 +95,7 @@ export class ODataServer {
       try {
         const { entitySet } = req.params;
         const queryOptions = req.query;
-        const userContext = req.user;
+        const userContext = (req as any).user;
 
         const result = await this.odataService.getEntitySet(
           entitySet,
@@ -105,7 +105,7 @@ export class ODataServer {
 
         res.json(result);
       } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error instanceof Error ? error.message : String(error) });
       }
     });
 
@@ -114,18 +114,18 @@ export class ODataServer {
       try {
         const { entitySet, key } = req.params;
         const queryOptions = req.query;
-        const userContext = req.user;
+        const userContext = (req as any).user;
 
         const result = await this.odataService.getEntity(
           entitySet,
-          key,
+          key || '',
           queryOptions,
           userContext
         );
 
         res.json(result);
       } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error instanceof Error ? error.message : String(error) });
       }
     });
 
@@ -134,7 +134,7 @@ export class ODataServer {
       try {
         const { entitySet } = req.params;
         const data = req.body;
-        const userContext = req.user;
+        const userContext = (req as any).user;
 
         const result = await this.odataService.createEntity(
           entitySet,
@@ -144,7 +144,7 @@ export class ODataServer {
 
         res.status(201).json(result);
       } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error instanceof Error ? error.message : String(error) });
       }
     });
 
@@ -153,7 +153,7 @@ export class ODataServer {
       try {
         const { entitySet, key } = req.params;
         const data = req.body;
-        const userContext = req.user;
+        const userContext = (req as any).user;
 
         const result = await this.odataService.updateEntity(
           entitySet,
@@ -164,7 +164,7 @@ export class ODataServer {
 
         res.json(result);
       } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error instanceof Error ? error.message : String(error) });
       }
     });
 
@@ -172,7 +172,7 @@ export class ODataServer {
     this.app.delete('/:entitySet\\(:key\\)', async (req, res) => {
       try {
         const { entitySet, key } = req.params;
-        const userContext = req.user;
+        const userContext = (req as any).user;
 
         await this.odataService.deleteEntity(
           entitySet,
@@ -182,7 +182,7 @@ export class ODataServer {
 
         res.status(204).send();
       } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error instanceof Error ? error.message : String(error) });
       }
     });
 
@@ -191,7 +191,7 @@ export class ODataServer {
       try {
         const { functionName } = req.params;
         const parameters = req.query;
-        const userContext = req.user;
+        const userContext = (req as any).user;
 
         const result = await this.odataService.callFunction(
           functionName,
@@ -201,7 +201,7 @@ export class ODataServer {
 
         res.json(result);
       } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error instanceof Error ? error.message : String(error) });
       }
     });
 
@@ -210,7 +210,7 @@ export class ODataServer {
       try {
         const { actionName } = req.params;
         const parameters = req.body;
-        const userContext = req.user;
+        const userContext = (req as any).user;
 
         const result = await this.odataService.callAction(
           actionName,
@@ -220,7 +220,7 @@ export class ODataServer {
 
         res.json(result);
       } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error instanceof Error ? error.message : String(error) });
       }
     });
 
@@ -228,7 +228,7 @@ export class ODataServer {
     this.app.post('/$batch', async (req, res) => {
       try {
         const operations = req.body;
-        const userContext = req.user;
+        const userContext = (req as any).user;
 
         const results = await this.odataService.batchOperation(
           operations,
@@ -237,7 +237,7 @@ export class ODataServer {
 
         res.json(results);
       } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error instanceof Error ? error.message : String(error) });
       }
     });
 

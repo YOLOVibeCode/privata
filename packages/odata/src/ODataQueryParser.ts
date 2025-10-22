@@ -158,14 +158,14 @@ export class ODataQueryParser {
       if (condition.includes(op)) {
         const parts = condition.split(op);
         if (parts.length === 2) {
-          const field = parts[0].trim();
-          const value = this.parseValue(parts[1].trim());
+          const field = parts[0]?.trim();
+          const value = this.parseValue(parts[1]?.trim() || '');
 
           return {
-            field,
+            field: field || '',
             operator,
             value,
-            dataType: this.getFieldDataType(field)
+            dataType: this.getFieldDataType(field || '')
           };
         }
       }
@@ -227,9 +227,9 @@ export class ODataQueryParser {
         const direction = parts[1] === 'desc' ? 'desc' : 'asc';
         
         sorts.push({
-          field,
+          field: field || '',
           direction,
-          dataType: this.getFieldDataType(field)
+          dataType: this.getFieldDataType(field || '')
         });
       }
     }
