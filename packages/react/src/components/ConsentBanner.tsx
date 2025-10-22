@@ -61,7 +61,12 @@ export const ConsentBanner: React.FC<ConsentBannerProps> = ({
     try {
       if (userId) {
         // Check if user has existing consent
-        const userData = await privata.requestDataAccess(userId, {});
+        const userData = await privata.requestDataAccess(userId, {
+          userId: userId,
+          region: 'US',
+          permissions: ['read'],
+          consent: {}
+        });
         if (userData?.consent) {
           setConsent(userData.consent);
           setShowBanner(false);
@@ -70,7 +75,7 @@ export const ConsentBanner: React.FC<ConsentBannerProps> = ({
         }
       } else {
         // Check localStorage for anonymous consent
-        const storedConsent = localStorage.getItem('privata-consent');
+        const storedConsent = typeof window !== 'undefined' ? window.localStorage.getItem('privata-consent') : null;
         if (storedConsent) {
           const parsedConsent = JSON.parse(storedConsent);
           setConsent(parsedConsent);
@@ -107,7 +112,9 @@ export const ConsentBanner: React.FC<ConsentBannerProps> = ({
         });
       } else {
         // Save consent for anonymous user
-        localStorage.setItem('privata-consent', JSON.stringify(consentData));
+        if (typeof window !== 'undefined') {
+          window.localStorage.setItem('privata-consent', JSON.stringify(consentData));
+        }
       }
 
       setConsent(consentData);

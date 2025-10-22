@@ -85,7 +85,7 @@ export class ODataService {
     this.metadata.addEntitySet(entitySet);
   }
 
-  getEntitySet(name: string): ODataEntitySet | undefined {
+  getEntitySetConfig(name: string): ODataEntitySet | undefined {
     return this.entitySets.get(name);
   }
 
@@ -105,7 +105,7 @@ export class ODataService {
   ): Promise<ODataResponse> {
     try {
       // Get entity set configuration
-      const entitySet = this.getEntitySet(entitySetName);
+      const entitySet = this.getEntitySetConfig(entitySetName);
       if (!entitySet) {
         throw new Error(`Entity set '${entitySetName}' not found`);
       }
@@ -181,7 +181,7 @@ export class ODataService {
   ): Promise<any> {
     try {
       // Get entity set configuration
-      const entitySet = this.getEntitySet(entitySetName);
+      const entitySet = this.getEntitySetConfig(entitySetName);
       if (!entitySet) {
         throw new Error(`Entity set '${entitySetName}' not found`);
       }
@@ -235,7 +235,7 @@ export class ODataService {
   ): Promise<any> {
     try {
       // Get entity set configuration
-      const entitySet = this.getEntitySet(entitySetName);
+      const entitySet = this.getEntitySetConfig(entitySetName);
       if (!entitySet) {
         throw new Error(`Entity set '${entitySetName}' not found`);
       }
@@ -276,7 +276,7 @@ export class ODataService {
   ): Promise<any> {
     try {
       // Get entity set configuration
-      const entitySet = this.getEntitySet(entitySetName);
+      const entitySet = this.getEntitySetConfig(entitySetName);
       if (!entitySet) {
         throw new Error(`Entity set '${entitySetName}' not found`);
       }
@@ -321,7 +321,7 @@ export class ODataService {
   ): Promise<void> {
     try {
       // Get entity set configuration
-      const entitySet = this.getEntitySet(entitySetName);
+      const entitySet = this.getEntitySetConfig(entitySetName);
       if (!entitySet) {
         throw new Error(`Entity set '${entitySetName}' not found`);
       }

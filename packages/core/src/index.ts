@@ -340,6 +340,12 @@ export class Privata {
     return ['id', 'name', 'email'];
   }
 
+  // Additional OData methods
+  async create(_model: string, _data: any): Promise<any> {
+    // Create new entity
+    return { id: Date.now(), ..._data };
+  }
+
   // Private helper methods
   private async validateAccess(operation: string, data: any): Promise<void> {
     if (this.config.compliance?.gdpr) {
