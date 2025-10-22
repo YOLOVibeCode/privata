@@ -19,7 +19,8 @@ export class ConfigManager {
       try {
         const config = await this.fileSystem.readJson(defaultConfigPath);
         this.logger.debug('Configuration loaded from file:', config);
-        return this.validateConfig(config);
+        const isValid = await this.validateConfig(config);
+        return isValid ? config : this.getDefaultConfig();
       } catch (error) {
         this.logger.warn('Failed to load configuration file, using defaults:', error);
       }

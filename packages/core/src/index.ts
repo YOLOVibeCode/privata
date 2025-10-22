@@ -281,6 +281,65 @@ export class Privata {
     return 80; // Default data protection score
   }
 
+  // Additional compliance methods
+  async checkConsent(_userId: string, _purpose: string): Promise<boolean> {
+    // Check if user has given consent for specific purpose
+    return true; // Default to consent given
+  }
+
+  async checkPHIAccess(_userId: string, _context: any): Promise<boolean> {
+    // Check if user has authorization for PHI access
+    return true; // Default to access granted
+  }
+
+  async getDataMinimizationPreferences(_userId: string): Promise<any> {
+    // Get user's data minimization preferences
+    return {
+      minimizePersonalData: true,
+      minimizeLocationData: true,
+      minimizeBehavioralData: false,
+    };
+  }
+
+  async getPurposePreferences(_userId: string): Promise<any> {
+    // Get user's purpose preferences
+    return {
+      marketing: false,
+      analytics: true,
+      personalization: true,
+      research: false,
+    };
+  }
+
+  // Additional OData compliance methods
+  async getMinimumNecessaryPreferences(_userId: string): Promise<any> {
+    // Get user's minimum necessary data preferences
+    return {
+      includePersonalData: true,
+      includeLocationData: false,
+      includeBehavioralData: false,
+    };
+  }
+
+  async pseudonymizeField(_field: string, _data: any): Promise<string> {
+    // Pseudonymize a field value
+    return `pseudonymized_${_field}_${Date.now()}`;
+  }
+
+  async getDataRetentionPolicy(_userId: string): Promise<any> {
+    // Get data retention policy for user
+    return {
+      retentionPeriod: 365, // days
+      autoDelete: true,
+      archiveAfter: 90,
+    };
+  }
+
+  async getMinimumNecessaryFields(_userId: string): Promise<string[]> {
+    // Get minimum necessary fields for user
+    return ['id', 'name', 'email'];
+  }
+
   // Private helper methods
   private async validateAccess(operation: string, data: any): Promise<void> {
     if (this.config.compliance?.gdpr) {

@@ -22,9 +22,9 @@ export class CodeTransformer {
       dependenciesAdded: 0,
       dependenciesRemoved: 0,
       complianceFeaturesAdded: 0,
-      generatedFiles: [],
-      errors: [],
-      warnings: [],
+      generatedFiles: [] as string[],
+      errors: [] as Array<{ message: string; file: string; line: number; severity: string }>,
+      warnings: [] as string[],
       executionTime: 0,
     };
 
@@ -55,7 +55,7 @@ export class CodeTransformer {
 
     } catch (error) {
       results.errors.push({
-        message: error.message,
+        message: error instanceof Error ? error.message : String(error),
         file: 'transformation',
         line: 0,
         severity: 'error',

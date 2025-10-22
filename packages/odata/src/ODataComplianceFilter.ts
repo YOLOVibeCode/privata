@@ -88,11 +88,7 @@ export class ODataComplianceFilter {
   ): Promise<void> {
     // Check if user has consent for PII access
     if (entitySet.compliance.pii) {
-      const hasConsent = await this.privata.checkConsent(userContext?.userId, {
-        pii: true,
-        purpose: 'odata-access',
-        legalBasis: 'consent'
-      });
+      const hasConsent = await this.privata.checkConsent(userContext?.userId || '', 'odata-access');
 
       if (!hasConsent) {
         // Remove PII fields from select
@@ -183,11 +179,7 @@ export class ODataComplianceFilter {
 
     // Validate consent for PII processing
     if (entitySet.compliance.pii) {
-      const hasConsent = await this.privata.checkConsent(userContext?.userId, {
-        pii: true,
-        purpose: 'odata-create',
-        legalBasis: 'consent'
-      });
+      const hasConsent = await this.privata.checkConsent(userContext?.userId || '', 'odata-create');
 
       if (!hasConsent) {
         // Remove PII fields

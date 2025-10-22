@@ -34,7 +34,8 @@ export { AnnotationBuilder } from './response/AnnotationBuilder';
 export type {
   ODataEntitySet,
   ODataQueryOptions,
-  ODataResponse,
-  ParsedQuery
+  ODataResponse
 } from './ODataService';
+
+export type { ParsedQuery } from './ODataComplianceFilter';
 
