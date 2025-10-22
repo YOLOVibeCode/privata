@@ -499,9 +499,9 @@ export class ODataService {
     
     if (urlParts.length > 1) {
       const key = urlParts[1];
-      return await this.getEntity(entitySetName, key, {}, userContext);
+      return await this.getEntity(entitySetName || '', key || '', {}, userContext);
     } else {
-      return await this.getEntitySet(entitySetName, {}, userContext);
+      return await this.getEntitySet(entitySetName || '', {}, userContext);
     }
   }
 
@@ -522,7 +522,7 @@ export class ODataService {
     const urlParts = url?.split('/') || [];
     const entitySetName = urlParts[0];
     const key = urlParts[1];
-    return await this.updateEntity(entitySetName, key, data, userContext);
+    return await this.updateEntity(entitySetName || '', key || '', data, userContext);
   }
 
   private async handleDeleteRequest(
@@ -532,7 +532,7 @@ export class ODataService {
     const urlParts = url?.split('/') || [];
     const entitySetName = urlParts[0];
     const key = urlParts[1];
-    return await this.deleteEntity(entitySetName, key, userContext);
+    return await this.deleteEntity(entitySetName || '', key || '', userContext);
   }
 }
 

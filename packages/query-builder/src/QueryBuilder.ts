@@ -86,7 +86,7 @@ export class QueryBuilder<T = any> {
       field,
       operator,
       value,
-      dataType,
+      dataType: dataType || undefined,
       complianceRequired: this.isComplianceRequired(dataType),
     });
     return this;
@@ -120,14 +120,14 @@ export class QueryBuilder<T = any> {
       field,
       operator: 'gte',
       value: start,
-      dataType,
+      dataType: dataType || undefined,
       complianceRequired: this.isComplianceRequired(dataType),
     });
     this.filters.push({
       field,
       operator: 'lte',
       value: end,
-      dataType,
+      dataType: dataType || undefined,
       complianceRequired: this.isComplianceRequired(dataType),
     });
     return this;
@@ -149,7 +149,7 @@ export class QueryBuilder<T = any> {
     return this.where(field, 'regex', pattern, dataType);
   }
 
-  exists(field: string, dataType?: FilterCondition['dataType']): QueryBuilder<T> {
+  whereExists(field: string, dataType?: FilterCondition['dataType']): QueryBuilder<T> {
     return this.where(field, 'exists', true, dataType);
   }
 

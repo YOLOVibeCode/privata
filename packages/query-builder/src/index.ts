@@ -11,6 +11,9 @@ export type {
 } from './QueryBuilder';
 
 // Default export
+import { QueryBuilder } from './QueryBuilder';
+import { createQueryBuilder } from './utils/createQueryBuilder';
+
 export default {
   QueryBuilder,
   createQueryBuilder,
