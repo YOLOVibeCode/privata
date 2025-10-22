@@ -1,0 +1,44 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Privata Application
+  - job_name: 'privata-app'
+    static_configs:
+      - targets: ['privata-app:3000']
+    metrics_path: '/metrics'
+    scrape_interval: 5s
+
+  # PostgreSQL Identity Database
+  - job_name: 'postgresql-identity'
+    static_configs:
+      - targets: ['identity-db:5432']
+    scrape_interval: 10s
+
+  # MongoDB Clinical Database
+  - job_name: 'mongodb-clinical'
+    static_configs:
+      - targets: ['clinical-db:27017']
+    scrape_interval: 10s
+
+  # Redis Cache
+  - job_name: 'redis-cache'
+    static_configs:
+      - targets: ['cache-server:6379']
+    scrape_interval: 10s
+
+  # Elasticsearch Audit
+  - job_name: 'elasticsearch-audit'
+    static_configs:
+      - targets: ['audit-db:9200']
+    scrape_interval: 10s

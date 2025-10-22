@@ -1,0 +1,31 @@
+{
+  "name": "privata-financial-services",
+  "version": "1.0.0",
+  "description": "Financial Services App with GDPR/HIPAA compliance using Privata",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "cd client && npm run build",
+    "build:server": "cd server && npm run build",
+    "start": "cd server && npm start",
+    "test": "npm run test:client && npm run test:server"
+  },
+  "keywords": [
+    "financial",
+    "banking",
+    "gdpr",
+    "privacy",
+    "compliance",
+    "vue",
+    "nodejs"
+  ],
+  "author": "Privata Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.0.0"
+  }
+}
+

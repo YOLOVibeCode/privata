@@ -1,12 +1,12 @@
 # Documentation Index
 
-> 📚 Auto-generated index of all project documentation. Last updated: 10/16/2025
+> 📚 Auto-generated index of all project documentation. Last updated: 10/22/2025
 
 ## 📊 Overview
 
-- **Total Documents**: 9
+- **Total Documents**: 24
 - **Categories**: 3
-- **Total Words**: 10,292
+- **Total Words**: 24,157
 
 ## 📑 Table of Contents
 
@@ -22,9 +22,25 @@
 
 *142 words • Updated 10/16/2025*
 
+### [Privata CLI Demo - Complete Specification](specifications/CLI_DEMO_SPECIFICATION.md)
+
+*1654 words • Updated 10/17/2025*
+
 ### [Privata - Edge & Modern ORM Support](specifications/EDGE_AND_MODERN_ORM_SUPPORT.md)
 
 *944 words • Updated 10/16/2025*
+
+### [GDPR Compliance Tests Specification](specifications/GDPR_COMPLIANCE_TESTS.md)
+
+*926 words • Updated 10/17/2025*
+
+### [HIPAA Compliance Tests Specification](specifications/HIPAA_COMPLIANCE_TESTS.md)
+
+*780 words • Updated 10/17/2025*
+
+### [Privata - Implementation Roadmap](specifications/IMPLEMENTATION_ROADMAP.md)
+
+*1065 words • Updated 10/17/2025*
 
 ### [Privata - Implementation Summary](specifications/IMPLEMENTATION_SUMMARY.md)
 
@@ -44,7 +60,11 @@
 
 ### [Privata - Specifications Index](specifications/SPECIFICATIONS_INDEX.md)
 
-*1656 words • Updated 10/16/2025*
+*1676 words • Updated 10/16/2025*
+
+### [Privata - TDD + ISP Implementation Plan with Serious Stress Testing](specifications/TDD_ISP_IMPLEMENTATION_PLAN.md)
+
+*674 words • Updated 10/17/2025*
 
 ## Guides
 
@@ -56,9 +76,49 @@
 
 ## General
 
+### [Changelog](CHANGELOG.md)
+
+*513 words • Updated 10/16/2025*
+
+### [Contributing to Privata](CONTRIBUTING.md)
+
+*710 words • Updated 10/16/2025*
+
+### [🎉 Privata - Successfully Deployed to GitHub!](DEPLOYMENT_SUCCESS.md)
+
+*1389 words • Updated 10/16/2025*
+
+### [🚀 Getting Started with Privata](GETTING_STARTED.md)
+
+*257 words • Updated 10/21/2025*
+
+### [🚀 Privata - Implementation Kickoff](IMPLEMENTATION_KICKOFF.md)
+
+*1262 words • Updated 10/17/2025*
+
+### [Privata - Project Structure](PROJECT_STRUCTURE.md)
+
+*955 words • Updated 10/16/2025*
+
+### [Documentation Index](README.md)
+
+*83 words • Updated 10/16/2025*
+
 ### [Privata Repository Map](REPOSITORY_MAP.md)
 
 *732 words • Updated 10/16/2025*
+
+### [Privata Repository Organization Summary](REPOSITORY_ORGANIZATION_SUMMARY.md)
+
+*1098 words • Updated 10/16/2025*
+
+### [🚀 START HERE - Privata Implementation Guide](START_HERE.md)
+
+*1259 words • Updated 10/16/2025*
+
+### [🎉 Privata Implementation Plan - COMPLETE](SUMMARY.md)
+
+*1220 words • Updated 10/16/2025*
 
 ---
 

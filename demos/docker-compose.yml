@@ -1,0 +1,168 @@
+version: '3.8'
+
+services:
+  # Identity Database (PII) - PostgreSQL on Server 1
+  identity-db:
+    image: postgres:15
+    container_name: privata-identity-db
+    environment:
+      POSTGRES_DB: identity_db
+      POSTGRES_USER: identity_user
+      POSTGRES_PASSWORD: identity_password_123
+    ports:
+      - "5432:5432"
+    volumes:
+      - identity_data:/var/lib/postgresql/data
+      - ./init-identity.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - identity-network
+    restart: unless-stopped
+
+  # Clinical Database (PHI) - MongoDB on Server 2
+  clinical-db:
+    image: mongo:7
+    container_name: privata-clinical-db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: clinical_admin
+      MONGO_INITDB_ROOT_PASSWORD: clinical_password_123
+      MONGO_INITDB_DATABASE: clinical_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - clinical_data:/data/db
+      - ./init-clinical.js:/docker-entrypoint-initdb.d/init.js
+    networks:
+      - clinical-network
+    restart: unless-stopped
+
+  # Cache Server - Redis
+  cache-server:
+    image: redis:7-alpine
+    container_name: privata-cache
+    ports:
+      - "6379:6379"
+    volumes:
+      - cache_data:/data
+    networks:
+      - identity-network
+      - clinical-network
+    restart: unless-stopped
+
+  # Audit Database - Elasticsearch
+  audit-db:
+    image: elasticsearch:8.11.0
+    container_name: privata-audit-db
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - audit_data:/usr/share/elasticsearch/data
+    networks:
+      - identity-network
+      - clinical-network
+    restart: unless-stopped
+
+  # Privata Application
+  privata-app:
+    build:
+      context: ../packages/core
+      dockerfile: Dockerfile
+    container_name: privata-app
+    environment:
+      # Database Configuration
+      IDENTITY_DB_HOST: identity-db
+      IDENTITY_DB_PORT: 5432
+      IDENTITY_DB_NAME: identity_db
+      IDENTITY_DB_USER: identity_user
+      IDENTITY_DB_PASSWORD: identity_password_123
+      
+      CLINICAL_DB_HOST: clinical-db
+      CLINICAL_DB_PORT: 27017
+      CLINICAL_DB_NAME: clinical_db
+      CLINICAL_DB_USER: clinical_admin
+      CLINICAL_DB_PASSWORD: clinical_password_123
+      
+      CACHE_HOST: cache-server
+      CACHE_PORT: 6379
+      
+      AUDIT_DB_HOST: audit-db
+      AUDIT_DB_PORT: 9200
+      
+      # Compliance Configuration
+      GDPR_ENABLED: true
+      HIPAA_ENABLED: true
+      AUDIT_LOGGING: true
+      
+      # Security
+      ENCRYPTION_KEY: your-256-bit-encryption-key-here
+      JWT_SECRET: your-jwt-secret-here
+      
+    ports:
+      - "3000:3000"
+    depends_on:
+      - identity-db
+      - clinical-db
+      - cache-server
+      - audit-db
+    networks:
+      - identity-network
+      - clinical-network
+    restart: unless-stopped
+
+  # Monitoring - Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: privata-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - identity-network
+      - clinical-network
+    restart: unless-stopped
+
+  # Monitoring - Grafana
+  grafana:
+    image: grafana/grafana:latest
+    container_name: privata-grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - identity-network
+      - clinical-network
+    restart: unless-stopped
+
+volumes:
+  identity_data:
+    driver: local
+  clinical_data:
+    driver: local
+  cache_data:
+    driver: local
+  audit_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+networks:
+  identity-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+  clinical-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16

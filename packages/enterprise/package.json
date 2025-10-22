@@ -1,0 +1,53 @@
+{
+  "name": "@privata/enterprise",
+  "version": "1.0.0",
+  "description": "Enterprise features for advanced monitoring and reporting with Privata",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix"
+  },
+  "keywords": [
+    "enterprise",
+    "monitoring",
+    "reporting",
+    "analytics",
+    "compliance",
+    "gdpr",
+    "hipaa",
+    "dashboard",
+    "metrics"
+  ],
+  "author": "Privata Team",
+  "license": "MIT",
+  "dependencies": {
+    "@privata/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "jest": "^29.0.0",
+    "eslint": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/privata/privata.git",
+    "directory": "packages/enterprise"
+  },
+  "bugs": {
+    "url": "https://github.com/privata/privata/issues"
+  },
+  "homepage": "https://github.com/privata/privata#readme"
+}
+

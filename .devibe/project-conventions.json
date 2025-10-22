@@ -1,0 +1,50 @@
+{
+  "docsFolder": {
+    "path": "docs",
+    "exists": true,
+    "structure": {
+      "hasSpecifications": true,
+      "hasImplementation": false,
+      "hasGuides": true,
+      "hasAPI": false,
+      "customFolders": []
+    }
+  },
+  "scriptsFolder": {
+    "path": "scripts",
+    "exists": false
+  },
+  "rootFileConventions": {
+    "readmeInRoot": true,
+    "changelogInRoot": false,
+    "contributingInRoot": false,
+    "licenseInRoot": true,
+    "customRootFiles": [
+      "ACHIEVEMENT_SUMMARY.md",
+      "COMMIT_MESSAGE.md",
+      "COMPLETE_ECOSYSTEM_SUMMARY.md",
+      "COMPLIANCE_SUMMARY.md",
+      "DEVELOPMENT_PLAN.md",
+      "DEVELOPMENT_PROGRESS_SUMMARY.md",
+      "EXAMPLES_SUMMARY.md",
+      "IMPLEMENTATION_CHECKLIST.md",
+      "ODATA_SUMMARY.md"
+    ]
+  },
+  "testConventions": {
+    "location": "centralized",
+    "folderName": "tests"
+  },
+  "recommendations": {
+    "shouldCreateDocsFolder": false,
+    "shouldCreateScriptsFolder": true,
+    "keepFilesInRoot": [
+      "README.md",
+      "CHANGELOG.md",
+      "CONTRIBUTING.md",
+      "LICENSE",
+      "CODE_OF_CONDUCT.md"
+    ]
+  },
+  "analyzedAt": "2025-10-22T15:49:09.263Z"
+}

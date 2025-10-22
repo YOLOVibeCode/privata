@@ -2,6 +2,7 @@
   "name": "privata",
   "version": "1.0.0",
   "description": "Transparent GDPR/HIPAA compliance library with automatic data separation",
+  "type": "module",
   "private": true,
   "workspaces": [
     "packages/*"
