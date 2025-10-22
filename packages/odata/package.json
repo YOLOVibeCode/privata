@@ -26,8 +26,8 @@
   "author": "Privata Team",
   "license": "MIT",
   "dependencies": {
-    "@privata/core": "workspace:*",
-    "@privata/query-builder": "workspace:*",
+    "@privata/core": "file:../core",
+    "@privata/query-builder": "file:../query-builder",
     "express": "^4.18.0",
     "cors": "^2.8.5",
     "helmet": "^7.0.0",

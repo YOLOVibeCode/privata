@@ -28,7 +28,7 @@
   "author": "Privata Team",
   "license": "MIT",
   "dependencies": {
-    "@privata/core": "workspace:*",
+    "@privata/core": "file:../core",
     "commander": "^11.0.0",
     "chalk": "^5.0.0",
     "ora": "^7.0.0",

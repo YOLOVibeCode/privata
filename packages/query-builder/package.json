@@ -25,7 +25,7 @@
   "author": "Privata Team",
   "license": "MIT",
   "dependencies": {
-    "@privata/core": "workspace:*"
+    "@privata/core": "file:../core"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

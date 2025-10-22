@@ -30,7 +30,9 @@
     "react-dom": ">=16.8.0"
   },
   "dependencies": {
-    "@privata/core": "workspace:*"
+    "@privata/core": "file:../core",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",
