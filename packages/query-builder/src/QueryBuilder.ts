@@ -288,14 +288,21 @@ export class QueryBuilder<T = any> {
       // Calculate execution time
       const executionTime = Date.now() - startTime;
       
+      // Calculate pagination info
+      const page = this.pagination?.page || 1;
+      const limit = this.pagination?.limit || 10;
+      const total = result.total || 0;
+      const hasNext = (page * limit) < total;
+      const hasPrev = page > 1;
+      
       // Build result
       const queryResult: QueryResult<T> = {
-        data: result.data,
-        total: result.total,
-        page: this.pagination?.page || 1,
-        limit: this.pagination?.limit || 10,
-        hasNext: result.hasNext,
-        hasPrev: result.hasPrev,
+        data: result.data || [],
+        total,
+        page,
+        limit,
+        hasNext,
+        hasPrev,
         compliance: {
           piiIncluded: this.options.includePII || false,
           phiIncluded: this.options.includePHI || false,
@@ -314,7 +321,8 @@ export class QueryBuilder<T = any> {
       return queryResult;
       
     } catch (error) {
-      throw new Error(`Query execution failed: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Query execution failed: ${errorMessage}`);
     }
   }
 
@@ -340,8 +348,13 @@ export class QueryBuilder<T = any> {
 
   // Aggregation methods
   async aggregate(pipeline: any[]): Promise<any> {
-    const query = this.buildQuery();
-    return await this.privata.aggregateWithCompliance(this.model, pipeline, query, this.options);
+    try {
+      const query = this.buildQuery();
+      return await this.privata.aggregateWithCompliance(this.model, pipeline, query, this.options);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Aggregation failed: ${errorMessage}`);
+    }
   }
 
   async groupBy(field: string, aggregation: Record<string, any>): Promise<any> {
@@ -352,35 +365,55 @@ export class QueryBuilder<T = any> {
   }
 
   async sum(field: string): Promise<number> {
-    const pipeline = [
-      { $group: { _id: null, total: { $sum: `$${field}` } } },
-    ];
-    const result = await this.aggregate(pipeline);
-    return result[0]?.total || 0;
+    try {
+      const pipeline = [
+        { $group: { _id: null, total: { $sum: `$${field}` } } },
+      ];
+      const result = await this.aggregate(pipeline);
+      return result[0]?.total || 0;
+    } catch (error) {
+      console.warn(`Sum aggregation failed for field ${field}:`, error);
+      return 0;
+    }
   }
 
   async avg(field: string): Promise<number> {
-    const pipeline = [
-      { $group: { _id: null, average: { $avg: `$${field}` } } },
-    ];
-    const result = await this.aggregate(pipeline);
-    return result[0]?.average || 0;
+    try {
+      const pipeline = [
+        { $group: { _id: null, average: { $avg: `$${field}` } } },
+      ];
+      const result = await this.aggregate(pipeline);
+      return result[0]?.average || 0;
+    } catch (error) {
+      console.warn(`Average aggregation failed for field ${field}:`, error);
+      return 0;
+    }
   }
 
   async min(field: string): Promise<any> {
-    const pipeline = [
-      { $group: { _id: null, minimum: { $min: `$${field}` } } },
-    ];
-    const result = await this.aggregate(pipeline);
-    return result[0]?.minimum;
+    try {
+      const pipeline = [
+        { $group: { _id: null, minimum: { $min: `$${field}` } } },
+      ];
+      const result = await this.aggregate(pipeline);
+      return result[0]?.minimum;
+    } catch (error) {
+      console.warn(`Min aggregation failed for field ${field}:`, error);
+      return null;
+    }
   }
 
   async max(field: string): Promise<any> {
-    const pipeline = [
-      { $group: { _id: null, maximum: { $max: `$${field}` } } },
-    ];
-    const result = await this.aggregate(pipeline);
-    return result[0]?.maximum;
+    try {
+      const pipeline = [
+        { $group: { _id: null, maximum: { $max: `$${field}` } } },
+      ];
+      const result = await this.aggregate(pipeline);
+      return result[0]?.maximum;
+    } catch (error) {
+      console.warn(`Max aggregation failed for field ${field}:`, error);
+      return null;
+    }
   }
 
   // Private methods
@@ -389,22 +422,27 @@ export class QueryBuilder<T = any> {
       return;
     }
 
-    // Check if PII access is allowed
-    if (this.options.includePII && this.options.complianceMode === 'strict') {
-      await this.privata.validatePIIAccess({
-        purpose: this.options.purpose,
-        legalBasis: this.options.legalBasis,
-        consentRequired: this.options.consentRequired,
-      });
-    }
+    try {
+      // Check if PII access is allowed
+      if (this.options.includePII && this.options.complianceMode === 'strict') {
+        await this.privata.validatePIIAccess({
+          purpose: this.options.purpose || 'data-access',
+          legalBasis: this.options.legalBasis || 'legitimate-interest',
+          consentRequired: this.options.consentRequired || false,
+        });
+      }
 
-    // Check if PHI access is allowed
-    if (this.options.includePHI && this.options.complianceMode === 'strict') {
-      await this.privata.validatePHIAccess({
-        purpose: this.options.purpose,
-        legalBasis: this.options.legalBasis,
-        consentRequired: this.options.consentRequired,
-      });
+      // Check if PHI access is allowed
+      if (this.options.includePHI && this.options.complianceMode === 'strict') {
+        await this.privata.validatePHIAccess({
+          purpose: this.options.purpose || 'data-access',
+          legalBasis: this.options.legalBasis || 'legitimate-interest',
+          consentRequired: this.options.consentRequired || false,
+        });
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(`Compliance validation failed: ${errorMessage}`);
     }
   }
 
@@ -416,7 +454,21 @@ export class QueryBuilder<T = any> {
       select: this.selectFields,
       include: this.includeRelations,
       exclude: this.excludeFields,
+      options: this.options,
     };
+
+    // Add compliance metadata
+    if (this.options.complianceMode !== 'disabled') {
+      query.compliance = {
+        mode: this.options.complianceMode,
+        piiIncluded: this.options.includePII,
+        phiIncluded: this.options.includePHI,
+        auditLogsIncluded: this.options.includeAuditLogs,
+        purpose: this.options.purpose,
+        legalBasis: this.options.legalBasis,
+        consentRequired: this.options.consentRequired,
+      };
+    }
 
     return query;
   }
@@ -473,7 +525,20 @@ export class QueryBuilder<T = any> {
       score -= 5;
     }
     
-    return Math.max(0, score);
+    // Bonus points for good practices
+    if (this.options.complianceMode === 'strict') {
+      score += 10;
+    }
+    
+    if (this.options.consentRequired) {
+      score += 15;
+    }
+    
+    if (this.options.purpose && this.options.purpose !== 'data-access') {
+      score += 5;
+    }
+    
+    return Math.max(0, Math.min(100, score));
   }
 }
 
